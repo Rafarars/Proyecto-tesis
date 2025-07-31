@@ -5,27 +5,62 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, MapPin, Truck, Route, AlertTriangle, BarChart3, Settings, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel Principal',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Mapa en Vivo',
+        href: '/mapa',
+        icon: MapPin,
+    },
+    {
+        title: 'Gestión de Vehículos',
+        href: '/vehiculos',
+        icon: Truck,
+    },
+    {
+        title: 'Rutas Optimizadas',
+        href: '/rutas',
+        icon: Route,
+    },
+    {
+        title: 'Alertas y Monitoreo',
+        href: '/alertas',
+        icon: AlertTriangle,
+    },
+    {
+        title: 'Reportes y Análisis',
+        href: '/reportes',
+        icon: BarChart3,
+    },
+    {
+        title: 'Gestión de Usuarios',
+        href: '/usuarios',
+        icon: Users,
+    },
+    {
+        title: 'Configuración',
+        href: '/configuracion',
+        icon: Settings,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
+        title: 'Documentación',
+        href: '/documentacion',
+        icon: BookOpen,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Soporte Técnico',
+        href: '/soporte',
+        icon: Folder,
     },
 ];
 </script>
