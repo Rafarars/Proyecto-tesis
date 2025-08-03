@@ -15,7 +15,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Configuración de contraseña',
         href: '/settings/password',
-    },
+        current: true
+    }
 ];
 
 const passwordInput = ref<HTMLInputElement | null>(null);

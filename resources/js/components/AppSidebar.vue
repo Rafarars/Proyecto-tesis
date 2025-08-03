@@ -16,17 +16,17 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Mapa en Vivo',
-        href: '/mapa',
+        href: '/mapa-vivo',
         icon: MapPin,
     },
     {
         title: 'Gestión de Vehículos',
-        href: '/vehiculos',
+        href: '/vehicles',
         icon: Truck,
     },
     {
         title: 'Rutas Optimizadas',
-        href: '/rutas',
+        href: '/routes',
         icon: Route,
     },
     {

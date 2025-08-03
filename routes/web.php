@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\RouteController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -12,12 +13,30 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Ruta para el módulo de mapa en vivo
+Route::get('/mapa-vivo', function () {
+    return Inertia::render('MapaVivo');
+})->middleware(['auth', 'verified'])->name('mapa.vivo');
+
+// API para obtener vehículos en tiempo real para el mapa
+Route::get('/api/live-vehicles', [VehicleController::class, 'getLiveVehicles'])->middleware(['auth', 'verified'])->name('api.live-vehicles');
+
 // Rutas para el sistema de geolocalización de vehículos
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
-    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
+    // CRUD de vehículos
+    Route::resource('vehicles', VehicleController::class);
+
+    // Rutas adicionales para vehículos
     Route::patch('/vehicles/{vehicle}/location', [VehicleController::class, 'updateLocation'])->name('vehicles.update-location');
     Route::get('/api/vehicles/nearby', [VehicleController::class, 'nearbyVehicles'])->name('vehicles.nearby');
+
+    // CRUD de rutas optimizadas
+    Route::resource('routes', RouteController::class);
+
+    // Rutas adicionales para gestión de rutas
+    Route::post('/routes/{route}/assign-vehicle', [RouteController::class, 'assignVehicle'])->name('routes.assign-vehicle');
+    Route::delete('/routes/{route}/unassign-vehicle', [RouteController::class, 'unassignVehicle'])->name('routes.unassign-vehicle');
+    Route::post('/routes/{route}/optimize', [RouteController::class, 'optimize'])->name('routes.optimize');
 });
 
 // Rutas de prueba para funcionalidades espaciales (sin autenticación para facilitar pruebas)

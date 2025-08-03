@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { MapPin, Truck, Route, AlertTriangle, BarChart3, Clock, CheckCircle, XCircle } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,6 +17,11 @@ const stats = {
     rutasCompletadas: 8,
     alertasActivas: 3,
     eficienciaPromedio: 87
+};
+
+// Funciones de navegación
+const navigateToMap = () => {
+    router.visit('/mapa-vivo');
 };
 
 const vehiculosRecientes = [
@@ -180,7 +185,10 @@ const alertasRecientes = [
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Accesos Rápidos</h3>
                 <div class="grid gap-4 md:grid-cols-4">
-                    <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <button
+                        @click="navigateToMap"
+                        class="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
                         <MapPin class="h-5 w-5" />
                         <span class="font-medium">Ver Mapa</span>
                     </button>

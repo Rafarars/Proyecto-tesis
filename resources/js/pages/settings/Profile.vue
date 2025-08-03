@@ -22,7 +22,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Configuración de perfil',
         href: '/settings/profile',
-    },
+        current: true
+    }
 ];
 
 const page = usePage();

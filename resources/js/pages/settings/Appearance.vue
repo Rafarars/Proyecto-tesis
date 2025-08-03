@@ -12,7 +12,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Configuración de apariencia',
         href: '/settings/appearance',
-    },
+        current: true
+    }
 ];
 </script>
 
