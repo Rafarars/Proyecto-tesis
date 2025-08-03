@@ -31,7 +31,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Alertas y Monitoreo',
-        href: '/alertas',
+        href: '/alerts',
         icon: AlertTriangle,
     },
     {

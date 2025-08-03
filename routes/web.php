@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\RouteController;
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\AlertRuleController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -37,6 +39,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/routes/{route}/assign-vehicle', [RouteController::class, 'assignVehicle'])->name('routes.assign-vehicle');
     Route::delete('/routes/{route}/unassign-vehicle', [RouteController::class, 'unassignVehicle'])->name('routes.unassign-vehicle');
     Route::post('/routes/{route}/optimize', [RouteController::class, 'optimize'])->name('routes.optimize');
+
+    // CRUD de alertas y monitoreo
+    Route::resource('alerts', AlertController::class);
+
+    // Rutas adicionales para alertas
+    Route::get('/api/live-alerts', [AlertController::class, 'getLiveAlerts'])->name('api.live-alerts');
+    Route::post('/alerts/simulate', [AlertController::class, 'simulateAlert'])->name('alerts.simulate');
+    Route::patch('/alerts/{alert}/acknowledge', [AlertController::class, 'acknowledge'])->name('alerts.acknowledge');
+    Route::patch('/alerts/{alert}/resolve', [AlertController::class, 'resolve'])->name('alerts.resolve');
+    Route::patch('/alerts/{alert}/dismiss', [AlertController::class, 'dismiss'])->name('alerts.dismiss');
+
+    // CRUD de reglas de alertas
+    Route::resource('alert-rules', AlertRuleController::class);
+    Route::get('/alerts/rules/create', [AlertRuleController::class, 'create'])->name('alerts.rules.create');
+    Route::patch('/alert-rules/{alertRule}/toggle', [AlertRuleController::class, 'toggle'])->name('alert-rules.toggle');
 });
 
 // Rutas de prueba para funcionalidades espaciales (sin autenticación para facilitar pruebas)

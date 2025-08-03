@@ -1,0 +1,272 @@
+<template>
+    <AppLayout title="Crear Nueva Regla" :breadcrumbs="breadcrumbs">
+        <Head title="Crear Regla de Alerta" />
+
+        <!-- Header -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 mb-6 border border-emerald-200 dark:border-emerald-800 ring-1 ring-gray-900/5 dark:ring-white/10">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Crear Nueva Regla</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">Configura una nueva regla de detección automática de alertas</p>
+                </div>
+                <Link
+                    :href="route('alerts.index', { panel: 'configuracion' })"
+                    class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-700 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                >
+                    <ArrowLeftIcon class="w-4 h-4 mr-2" />
+                    Volver
+                </Link>
+            </div>
+        </div>
+
+        <form @submit.prevent="submit" class="space-y-6">
+            <!-- Información Básica -->
+            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Información Básica</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Configura los datos principales de la regla</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nombre de la Regla</label>
+                            <input
+                                id="name"
+                                v-model="form.name"
+                                type="text"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                placeholder="Ej: Desvío de Ruta Crítico"
+                                required
+                            />
+                            <div v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</div>
+                        </div>
+
+                        <div>
+                            <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Código de la Regla</label>
+                            <input
+                                id="code"
+                                v-model="form.code"
+                                type="text"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                placeholder="Ej: RULE-001"
+                                required
+                            />
+                            <div v-if="form.errors.code" class="mt-2 text-sm text-red-600">{{ form.errors.code }}</div>
+                        </div>
+
+                        <div>
+                            <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo de Alerta</label>
+                            <select
+                                id="type"
+                                v-model="form.type"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                required
+                            >
+                                <option value="">Seleccionar tipo</option>
+                                <option value="desvio_ruta">Desvío de Ruta</option>
+                                <option value="parada_prolongada">Parada Prolongada</option>
+                                <option value="velocidad_excesiva">Velocidad Excesiva</option>
+                                <option value="combustible_bajo">Combustible Bajo</option>
+                                <option value="mantenimiento_vencido">Mantenimiento Vencido</option>
+                                <option value="zona_restringida">Zona Restringida</option>
+                            </select>
+                            <div v-if="form.errors.type" class="mt-2 text-sm text-red-600">{{ form.errors.type }}</div>
+                        </div>
+
+                        <div>
+                            <label for="priority" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prioridad</label>
+                            <select
+                                id="priority"
+                                v-model="form.priority"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                required
+                            >
+                                <option value="">Seleccionar prioridad</option>
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                                <option value="critica">Crítica</option>
+                            </select>
+                            <div v-if="form.errors.priority" class="mt-2 text-sm text-red-600">{{ form.errors.priority }}</div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descripción</label>
+                            <textarea
+                                id="description"
+                                v-model="form.description"
+                                rows="3"
+                                class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors resize-none"
+                                placeholder="Descripción de la regla y cuándo debe activarse..."
+                            ></textarea>
+                            <div v-if="form.errors.description" class="mt-2 text-sm text-red-600">{{ form.errors.description }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Condiciones de Activación -->
+            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Condiciones de Activación</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Define cuándo debe activarse esta regla</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="threshold_value" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Valor Umbral</label>
+                            <input
+                                id="threshold_value"
+                                v-model="form.threshold_value"
+                                type="number"
+                                step="0.01"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                placeholder="Ej: 250 (metros), 60 (km/h), 30 (minutos)"
+                            />
+                            <div v-if="form.errors.threshold_value" class="mt-2 text-sm text-red-600">{{ form.errors.threshold_value }}</div>
+                        </div>
+
+                        <div>
+                            <label for="threshold_unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidad</label>
+                            <select
+                                id="threshold_unit"
+                                v-model="form.threshold_unit"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            >
+                                <option value="">Seleccionar unidad</option>
+                                <option value="metros">Metros</option>
+                                <option value="kilometros">Kilómetros</option>
+                                <option value="minutos">Minutos</option>
+                                <option value="horas">Horas</option>
+                                <option value="kmh">Km/h</option>
+                                <option value="litros">Litros</option>
+                                <option value="porcentaje">Porcentaje</option>
+                            </select>
+                            <div v-if="form.errors.threshold_unit" class="mt-2 text-sm text-red-600">{{ form.errors.threshold_unit }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horarios y Días -->
+            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Horarios de Activación</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Define cuándo está activa esta regla</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="active_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hora de Inicio</label>
+                            <input
+                                id="active_from"
+                                v-model="form.active_from"
+                                type="time"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            />
+                            <div v-if="form.errors.active_from" class="mt-2 text-sm text-red-600">{{ form.errors.active_from }}</div>
+                        </div>
+
+                        <div>
+                            <label for="active_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hora de Fin</label>
+                            <input
+                                id="active_to"
+                                v-model="form.active_to"
+                                type="time"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            />
+                            <div v-if="form.errors.active_to" class="mt-2 text-sm text-red-600">{{ form.errors.active_to }}</div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Días de la Semana</label>
+                            <div class="grid grid-cols-7 gap-2">
+                                <label v-for="(day, index) in daysOfWeek" :key="index" class="flex items-center">
+                                    <input
+                                        v-model="form.active_days"
+                                        :value="index"
+                                        type="checkbox"
+                                        class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-300 focus:ring focus:ring-emerald-200 focus:ring-opacity-50"
+                                    />
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ day }}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="p-6 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700 border-t border-gray-100 dark:border-slate-700">
+                    <div class="flex items-center justify-end space-x-4">
+                        <Link
+                            :href="route('alerts.index', { panel: 'configuracion' })"
+                            class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-500 rounded-lg font-semibold text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                        >
+                            Cancelar
+                        </Link>
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 border border-transparent rounded-lg font-bold text-sm text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-200"
+                        >
+                            <span v-if="form.processing">Creando...</span>
+                            <span v-else>Crear Regla</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </AppLayout>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Head, Link, useForm } from '@inertiajs/vue3'
+import AppLayout from '@/layouts/AppLayout.vue'
+import {
+    ArrowLeftIcon
+} from '@heroicons/vue/24/outline'
+
+const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+
+// Breadcrumbs
+const breadcrumbs = [
+    {
+        title: 'Alertas y Monitoreo',
+        href: '/alerts'
+    },
+    {
+        title: 'Configuración de Reglas',
+        href: '/alerts?panel=configuracion'
+    },
+    {
+        title: 'Crear Nueva Regla',
+        href: '/alerts/rules/create'
+    }
+]
+
+const form = useForm({
+    name: '',
+    code: '',
+    type: '',
+    priority: '',
+    description: '',
+    threshold_value: null as number | null,
+    threshold_unit: '',
+    active_from: '',
+    active_to: '',
+    active_days: [] as number[],
+    is_active: true,
+})
+
+const submit = () => {
+    form.post(route('alert-rules.store'))
+}
+</script>

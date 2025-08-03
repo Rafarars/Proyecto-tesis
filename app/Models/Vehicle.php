@@ -171,4 +171,10 @@ class Vehicle extends Model
                    ->latest('completion_date')
                    ->first();
     }
+
+    // Relación con alertas
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(Alert::class);
+    }
 }
