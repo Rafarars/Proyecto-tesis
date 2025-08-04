@@ -25,6 +25,11 @@ const mainNavItems: NavItem[] = [
         icon: Truck,
     },
     {
+        title: 'Gestión de Usuarios',
+        href: '/drivers',
+        icon: Users,
+    },
+    {
         title: 'Rutas Optimizadas',
         href: '/routes',
         icon: Route,

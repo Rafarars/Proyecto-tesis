@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AlertRuleController;
@@ -32,6 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas adicionales para vehículos
     Route::patch('/vehicles/{vehicle}/location', [VehicleController::class, 'updateLocation'])->name('vehicles.update-location');
     Route::get('/api/vehicles/nearby', [VehicleController::class, 'nearbyVehicles'])->name('vehicles.nearby');
+
+    // CRUD de conductores
+    Route::resource('drivers', DriverController::class);
+
+    // Rutas adicionales para conductores
+    Route::post('/drivers/{driver}/assign-vehicle', [DriverController::class, 'assignVehicle'])->name('drivers.assign-vehicle');
+    Route::delete('/drivers/{driver}/unassign-vehicle', [DriverController::class, 'unassignVehicle'])->name('drivers.unassign-vehicle');
 
     // CRUD de rutas optimizadas
     Route::resource('routes', RouteController::class);
