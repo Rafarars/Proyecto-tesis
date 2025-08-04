@@ -80,7 +80,15 @@ class DriverController extends Controller
      */
     public function create()
     {
-        return Inertia::render('drivers/Create');
+        // Obtener vehículos disponibles para asignar
+        $availableVehicles = Vehicle::whereNull('driver_id')
+                                   ->where('status', 'activo')
+                                   ->where('is_active', true)
+                                   ->get(['id', 'license_plate', 'code', 'brand', 'model', 'type']);
+
+        return Inertia::render('drivers/Create', [
+            'availableVehicles' => $availableVehicles
+        ]);
     }
 
     /**
@@ -90,7 +98,6 @@ class DriverController extends Controller
     {
         $validated = $request->validate([
             // Información personal
-            'employee_code' => 'required|string|max:255|unique:drivers',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'document_type' => 'required|string|in:cedula,pasaporte,extranjeria',
@@ -126,9 +133,20 @@ class DriverController extends Controller
             // Auditoría
             'notes' => 'nullable|string',
             'is_active' => 'boolean',
+
+            // Asignación de vehículo
+            'vehicle_id' => 'nullable|exists:vehicles,id',
         ]);
 
+        // Generar código de empleado automáticamente
+        $validated['employee_code'] = $this->generateEmployeeCode();
+
         $driver = Driver::create($validated);
+
+        // Si se asignó un vehículo, actualizar el vehículo
+        if (isset($validated['vehicle_id']) && $validated['vehicle_id']) {
+            Vehicle::where('id', $validated['vehicle_id'])->update(['driver_id' => $driver->id]);
+        }
 
         return redirect()->route('drivers.index')
                         ->with('success', 'Conductor creado exitosamente.');
@@ -271,5 +289,29 @@ class DriverController extends Controller
 
         return redirect()->back()
                         ->with('success', 'Vehículo desasignado exitosamente.');
+    }
+
+    /**
+     * Generate a unique employee code.
+     */
+    private function generateEmployeeCode()
+    {
+        $year = date('Y');
+        $prefix = 'EMP-' . $year . '-';
+
+        // Buscar el último código del año actual
+        $lastDriver = Driver::where('employee_code', 'like', $prefix . '%')
+                           ->orderBy('employee_code', 'desc')
+                           ->first();
+
+        if ($lastDriver) {
+            // Extraer el número del último código
+            $lastNumber = (int) str_replace($prefix, '', $lastDriver->employee_code);
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+
+        return $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 }

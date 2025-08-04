@@ -2,110 +2,86 @@
     <AppLayout title="Nuevo Conductor" :breadcrumbs="breadcrumbs">
         <!-- Panel de título -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 mb-6 border border-emerald-200 dark:border-emerald-800 ring-1 ring-gray-900/5 dark:ring-white/10">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
-                        <UserPlus class="h-8 w-8 text-white" />
-                    </div>
-                    <div class="flex-1">
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Nuevo Conductor</h1>
-                        <p class="text-gray-600 dark:text-gray-300 mt-1">Registra un nuevo conductor en el sistema de geolocalización</p>
-                    </div>
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
                 </div>
-                <div class="flex-shrink-0">
-                    <Link
-                        :href="route('drivers.index')"
-                        class="inline-flex items-center bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        <ArrowLeft class="w-5 h-5 mr-2" />
-                        Volver
-                    </Link>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Crear Nuevo Conductor</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">Registra un nuevo conductor en la flota de recolección</p>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto">
+        <!-- Formulario -->
+        <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+            <!-- Información Personal -->
+            <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Información Personal</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Datos principales del conductor</p>
+            </div>
             <form @submit.prevent="submit" class="space-y-6">
-                <!-- Información Personal -->
-                <div class="bg-white shadow-sm rounded-lg">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900 flex items-center">
-                            <User class="h-5 w-5 mr-2 text-emerald-600" />
-                            Información Personal
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Código de empleado -->
-                            <div>
-                                <label for="employee_code" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Código de Empleado *
-                                </label>
-                                <input
-                                    id="employee_code"
-                                    v-model="form.employee_code"
-                                    type="text"
-                                    required
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                    :class="{ 'border-red-300': form.errors.employee_code }"
-                                />
-                                <p v-if="form.errors.employee_code" class="mt-1 text-sm text-red-600">
-                                    {{ form.errors.employee_code }}
-                                </p>
-                            </div>
+                    <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Código de empleado (autogenerado) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Código de Empleado
+                            </label>
+                            <input
+                                type="text"
+                                disabled
+                                value="Se generará automáticamente"
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-600 text-gray-500 dark:text-gray-400 shadow-sm"
+                                placeholder="Generado automáticamente"
+                            >
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">El código se genera automáticamente</p>
+                        </div>
 
-                            <!-- Nombres -->
-                            <div>
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nombres *
-                                </label>
-                                <input
-                                    id="first_name"
-                                    v-model="form.first_name"
-                                    type="text"
-                                    required
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                    :class="{ 'border-red-300': form.errors.first_name }"
-                                />
-                                <p v-if="form.errors.first_name" class="mt-1 text-sm text-red-600">
-                                    {{ form.errors.first_name }}
-                                </p>
-                            </div>
+                        <!-- Nombres -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Nombres *
+                            </label>
+                            <input
+                                v-model="form.first_name"
+                                type="text"
+                                required
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                placeholder="Ej: Carlos"
+                            >
+                        </div>
 
-                            <!-- Apellidos -->
-                            <div>
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Apellidos *
-                                </label>
-                                <input
-                                    id="last_name"
-                                    v-model="form.last_name"
-                                    type="text"
-                                    required
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                    :class="{ 'border-red-300': form.errors.last_name }"
-                                />
-                                <p v-if="form.errors.last_name" class="mt-1 text-sm text-red-600">
-                                    {{ form.errors.last_name }}
-                                </p>
-                            </div>
+                        <!-- Apellidos -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Apellidos *
+                            </label>
+                            <input
+                                v-model="form.last_name"
+                                type="text"
+                                required
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                placeholder="Ej: Rodríguez"
+                            >
+                        </div>
 
-                            <!-- Tipo de documento -->
-                            <div>
-                                <label for="document_type" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Tipo de Documento *
-                                </label>
-                                <select
-                                    id="document_type"
-                                    v-model="form.document_type"
-                                    required
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                    :class="{ 'border-red-300': form.errors.document_type }"
-                                >
-                                    <option value="">Seleccionar tipo</option>
-                                    <option value="cedula">Cédula</option>
-                                    <option value="pasaporte">Pasaporte</option>
-                                    <option value="extranjeria">Extranjería</option>
+                        <!-- Tipo de documento -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Tipo de Documento *
+                            </label>
+                            <select
+                                v-model="form.document_type"
+                                required
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            >
+                                <option value="">Seleccionar tipo</option>
+                                <option value="cedula">Cédula</option>
+                                <option value="pasaporte">Pasaporte</option>
+                                <option value="extranjeria">Extranjería</option>
                                 </select>
                                 <p v-if="form.errors.document_type" class="mt-1 text-sm text-red-600">
                                     {{ form.errors.document_type }}
@@ -170,10 +146,35 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Asignación de Vehículo -->
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Asignar Vehículo (Opcional)
+                                </label>
+                                <select
+                                    v-model="form.vehicle_id"
+                                    class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                >
+                                    <option value="">Sin asignar (se puede asignar después)</option>
+                                    <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
+                                        {{ vehicle.license_plate }} - {{ vehicle.code }} ({{ vehicle.type }})
+                                    </option>
+                                </select>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Solo se muestran vehículos disponibles sin conductor asignado</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Información de Contacto -->
+                <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Información de Contacto</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Datos de contacto del conductor</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white shadow-sm rounded-lg">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 flex items-center">
@@ -585,30 +586,23 @@
                 </div>
 
                 <!-- Botones de acción -->
-                <div class="flex justify-end space-x-3">
-                    <Link
-                        :href="route('drivers.index')"
-                        class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-                    >
-                        Cancelar
-                    </Link>
-                    <button
-                        type="submit"
-                        :disabled="form.processing"
-                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
-                    >
-                        <span v-if="form.processing" class="inline-flex items-center">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Guardando...
-                        </span>
-                        <span v-else class="inline-flex items-center">
-                            <Save class="h-4 w-4 mr-2" />
-                            Guardar Conductor
-                        </span>
-                    </button>
+                <!-- Botones -->
+                <div class="p-6 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700 border-t border-gray-100 dark:border-slate-700">
+                    <div class="flex justify-end space-x-4">
+                        <Link
+                            :href="route('drivers.index')"
+                            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            Cancelar
+                        </Link>
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            {{ form.processing ? 'Guardando...' : 'Crear Conductor' }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -619,28 +613,29 @@
 import { computed } from 'vue';
 import { useForm, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import {
-    ArrowLeft,
-    User,
-    Phone,
-    Briefcase,
-    CreditCard,
-    Heart,
-    FileText,
-    Save,
-    UserPlus,
-} from 'lucide-vue-next';
+// Props
+const props = defineProps({
+    availableVehicles: {
+        type: Array,
+        default: () => []
+    }
+});
 
 // Breadcrumbs
-const breadcrumbs = computed(() => [
-    { name: 'Gestión de Usuarios', href: route('drivers.index') },
-    { name: 'Nuevo Conductor', href: '#' },
-]);
+const breadcrumbs = [
+    {
+        title: 'Gestión de Usuarios',
+        href: '/drivers'
+    },
+    {
+        title: 'Crear Conductor',
+        href: '/drivers/create'
+    }
+];
 
 // Formulario
 const form = useForm({
     // Información personal
-    employee_code: '',
     first_name: '',
     last_name: '',
     document_type: '',
@@ -676,6 +671,9 @@ const form = useForm({
     // Auditoría
     notes: '',
     is_active: true,
+
+    // Asignación de vehículo
+    vehicle_id: '',
 });
 
 // Métodos

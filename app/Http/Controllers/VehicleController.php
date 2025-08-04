@@ -96,14 +96,14 @@ class VehicleController extends Controller
                 'insurance_expiry' => $vehicle->insurance_expiry,
                 'notes' => $vehicle->notes,
                 'location_updated_at' => $vehicle->location_updated_at,
-                'assigned_route' => $vehicle->currentRoute->first() ? [
-                    'id' => $vehicle->currentRoute->first()->id,
-                    'name' => $vehicle->currentRoute->first()->name,
-                    'code' => $vehicle->currentRoute->first()->code,
-                    'status' => $vehicle->currentRoute->first()->status,
-                    'collection_points_count' => $vehicle->currentRoute->first()->collection_points_count,
-                    'total_distance_km' => $vehicle->currentRoute->first()->total_distance_km,
-                    'estimated_duration_formatted' => $vehicle->currentRoute->first()->estimated_duration_formatted,
+                'assigned_route' => $vehicle->currentRoute ? [
+                    'id' => $vehicle->currentRoute->id,
+                    'name' => $vehicle->currentRoute->name,
+                    'code' => $vehicle->currentRoute->code,
+                    'status' => $vehicle->currentRoute->status,
+                    'collection_points_count' => $vehicle->currentRoute->collection_points_count,
+                    'total_distance_km' => $vehicle->currentRoute->total_distance_km,
+                    'estimated_duration_formatted' => $vehicle->currentRoute->estimated_duration_formatted,
                 ] : null,
                 'maintenance_records' => $vehicle->maintenanceRecords->map(function($record) {
                     return [

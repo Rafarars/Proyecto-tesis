@@ -361,7 +361,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { router, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Modal from '@/components/Modal.vue';
@@ -394,10 +394,16 @@ const showAssignModal = ref(false);
 const showUnassignModal = ref(false);
 
 // Breadcrumbs
-const breadcrumbs = computed(() => [
-    { name: 'Gestión de Usuarios', href: route('drivers.index') },
-    { name: 'Detalles del Conductor', href: '#' },
-]);
+const breadcrumbs = [
+    {
+        title: 'Gestión de Usuarios',
+        href: '/drivers'
+    },
+    {
+        title: 'Detalles del Conductor',
+        href: `/drivers/${props.driver?.id}`
+    }
+];
 
 // Formularios
 const assignForm = useForm({

@@ -2,52 +2,40 @@
     <AppLayout title="Editar Conductor" :breadcrumbs="breadcrumbs">
         <!-- Panel de título -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 mb-6 border border-emerald-200 dark:border-emerald-800 ring-1 ring-gray-900/5 dark:ring-white/10">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
-                        <Edit class="h-8 w-8 text-white" />
-                    </div>
-                    <div class="flex-1">
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Editar Conductor</h1>
-                        <p class="text-gray-600 dark:text-gray-300 mt-1">Modifica la información del conductor {{ driver.first_name }} {{ driver.last_name }}</p>
-                    </div>
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
                 </div>
-                <div class="flex-shrink-0">
-                    <Link
-                        :href="route('drivers.index')"
-                        class="inline-flex items-center bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        <ArrowLeft class="w-5 h-5 mr-2" />
-                        Volver
-                    </Link>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Editar Conductor</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">Modifica la información del conductor {{ driver.first_name }} {{ driver.last_name }}</p>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto">
+        <!-- Formulario -->
+        <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl border border-gray-200 dark:border-slate-600 sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+            <!-- Información Personal -->
+            <div class="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Información Personal</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Datos principales del conductor</p>
+            </div>
             <form @submit.prevent="submit" class="space-y-6">
-                <!-- Información Personal -->
-                <div class="bg-white shadow-sm rounded-lg border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                        <h3 class="text-lg font-medium text-gray-900 flex items-center">
-                            <User class="h-5 w-5 mr-2 text-emerald-600" />
-                            Información Personal
-                        </h3>
-                    </div>
-                    <div class="p-6 space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Código de empleado -->
-                            <div>
-                                <label for="employee_code" class="block text-sm font-medium text-gray-700 mb-1">
-                                    Código de Empleado *
-                                </label>
-                                <input
-                                    id="employee_code"
-                                    v-model="form.employee_code"
-                                    type="text"
-                                    required
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                    :class="{ 'border-red-300': form.errors.employee_code }"
+                <div class="p-6 bg-white dark:bg-slate-800">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Código de empleado (solo lectura) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Código de Empleado
+                            </label>
+                            <input
+                                :value="driver?.employee_code"
+                                type="text"
+                                disabled
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-600 text-gray-500 dark:text-gray-400 shadow-sm"
+                                placeholder="Generado automáticamente"
                                 />
                                 <p v-if="form.errors.employee_code" class="mt-1 text-sm text-red-600">
                                     {{ form.errors.employee_code }}
@@ -356,31 +344,23 @@
                     </div>
                 </div>
 
-                <!-- Botones de acción -->
-                <div class="flex justify-end space-x-3 pb-6">
-                    <Link
-                        :href="route('drivers.index')"
-                        class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-                    >
-                        Cancelar
-                    </Link>
-                    <button
-                        type="submit"
-                        :disabled="form.processing"
-                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
-                    >
-                        <span v-if="form.processing" class="inline-flex items-center">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Guardando...
-                        </span>
-                        <span v-else class="inline-flex items-center">
-                            <Save class="h-4 w-4 mr-2" />
-                            Actualizar Conductor
-                        </span>
-                    </button>
+                <!-- Botones -->
+                <div class="p-6 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-700 border-t border-gray-100 dark:border-slate-700">
+                    <div class="flex justify-end space-x-4">
+                        <Link
+                            :href="route('drivers.index')"
+                            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            Cancelar
+                        </Link>
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            {{ form.processing ? 'Guardando...' : 'Actualizar Conductor' }}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -388,7 +368,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+// No imports from vue needed
 import { useForm, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import {
@@ -405,10 +385,16 @@ const props = defineProps({
 });
 
 // Breadcrumbs
-const breadcrumbs = computed(() => [
-    { name: 'Gestión de Usuarios', href: route('drivers.index') },
-    { name: 'Editar Conductor', href: '#' },
-]);
+const breadcrumbs = [
+    {
+        title: 'Gestión de Usuarios',
+        href: '/drivers'
+    },
+    {
+        title: 'Editar Conductor',
+        href: `/drivers/${props.driver?.id}/edit`
+    }
+];
 
 // Formulario
 const form = useForm({
