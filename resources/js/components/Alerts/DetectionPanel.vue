@@ -148,27 +148,113 @@
             </div>
         </div>
 
-        <!-- Modal de simulación (placeholder) -->
+        <!-- Modal de simulación -->
         <div v-if="showSimulationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Simular Alerta</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-4">Funcionalidad de simulación en desarrollo...</p>
-                <div class="flex justify-end">
+            <div class="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-lg w-full mx-4">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Simular Alerta</h3>
                     <button
-                        @click="showSimulationModal = false"
-                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        @click="closeModal"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
-                        Cerrar
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
                     </button>
                 </div>
+
+                <form @submit.prevent="simulateAlert" class="space-y-4">
+                    <!-- Selección de vehículo -->
+                    <div>
+                        <label for="vehicle_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Vehículo
+                        </label>
+                        <select
+                            id="vehicle_id"
+                            v-model="simulationForm.vehicle_id"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            required
+                        >
+                            <option value="">Seleccionar vehículo</option>
+                            <option v-for="vehicle in vehicles" :key="vehicle.id" :value="vehicle.id">
+                                {{ vehicle.license_plate }} - {{ vehicle.code }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de alerta -->
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Tipo de Alerta
+                        </label>
+                        <select
+                            id="type"
+                            v-model="simulationForm.type"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            required
+                        >
+                            <option value="">Seleccionar tipo</option>
+                            <option value="desvio_ruta">Desvío de Ruta</option>
+                            <option value="parada_prolongada">Parada Prolongada</option>
+                            <option value="perdida_senal">Pérdida de Señal</option>
+                            <option value="fuera_zona">Fuera de Zona</option>
+                        </select>
+                    </div>
+
+                    <!-- Prioridad -->
+                    <div>
+                        <label for="priority" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Prioridad
+                        </label>
+                        <select
+                            id="priority"
+                            v-model="simulationForm.priority"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            required
+                        >
+                            <option value="">Seleccionar prioridad</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                            <option value="critica">Crítica</option>
+                        </select>
+                    </div>
+
+                    <!-- Mensaje de estado -->
+                    <div v-if="simulationMessage" :class="simulationMessageClass" class="p-3 rounded-lg text-sm">
+                        {{ simulationMessage }}
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button
+                            type="button"
+                            @click="closeModal"
+                            class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            :disabled="isSimulating"
+                            class="px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center"
+                        >
+                            <svg v-if="isSimulating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            {{ isSimulating ? 'Simulando...' : 'Simular Alerta' }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { ref, computed, onMounted } from 'vue'
+import { Link, router } from '@inertiajs/vue3'
 import { CogIcon } from '@heroicons/vue/24/outline'
 import {
     ExclamationTriangleIcon,
@@ -196,10 +282,90 @@ interface Props {
 const props = defineProps<Props>()
 
 const showSimulationModal = ref(false)
+const isSimulating = ref(false)
+const simulationMessage = ref('')
+const simulationMessageClass = ref('')
+const vehicles = ref([])
+
+// Formulario de simulación
+const simulationForm = ref({
+    vehicle_id: '',
+    type: '',
+    priority: ''
+})
 
 const alertsByType = computed(() => {
     return props.data.alerts_by_type || {}
 })
+
+// Cargar vehículos al montar el componente
+onMounted(async () => {
+    try {
+        const response = await fetch('/api/live-vehicles')
+        const data = await response.json()
+        vehicles.value = data.vehicles || []
+    } catch (error) {
+        console.error('Error cargando vehículos:', error)
+    }
+})
+
+// Función para simular alerta
+const simulateAlert = async () => {
+    isSimulating.value = true
+    simulationMessage.value = ''
+
+    try {
+        const response = await fetch('/alerts/simulate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify(simulationForm.value)
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+            simulationMessage.value = `✅ ${data.message}: ${data.alert.code} - ${data.alert.title}`
+            simulationMessageClass.value = 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 border border-green-200 dark:border-green-800'
+
+            // Limpiar formulario
+            simulationForm.value = {
+                vehicle_id: '',
+                type: '',
+                priority: ''
+            }
+
+            // Cerrar modal después de 3 segundos
+            setTimeout(() => {
+                closeModal()
+                // Recargar la página para mostrar la nueva alerta
+                router.reload()
+            }, 3000)
+        } else {
+            simulationMessage.value = `❌ Error: ${data.message || 'No se pudo simular la alerta'}`
+            simulationMessageClass.value = 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800'
+        }
+    } catch (error) {
+        console.error('Error simulando alerta:', error)
+        simulationMessage.value = '❌ Error de conexión. Intenta nuevamente.'
+        simulationMessageClass.value = 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800'
+    } finally {
+        isSimulating.value = false
+    }
+}
+
+// Función para cerrar modal
+const closeModal = () => {
+    showSimulationModal.value = false
+    simulationMessage.value = ''
+    simulationForm.value = {
+        vehicle_id: '',
+        type: '',
+        priority: ''
+    }
+}
 
 const getTypeLabel = (type: string): string => {
     const labels: Record<string, string> = {

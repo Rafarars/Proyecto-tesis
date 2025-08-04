@@ -288,6 +288,8 @@ class AlertController extends Controller
                 'code' => $vehicle->code,
                 'type' => $vehicle->type,
                 'full_name' => $vehicle->full_name,
+                'current_location' => $vehicle->current_location,
+                'location_updated_at' => $vehicle->location_updated_at,
             ];
         });
 
@@ -323,21 +325,28 @@ class AlertController extends Controller
         $validated = $request->validate([
             'type' => 'required|in:desvio_ruta,parada_prolongada,perdida_senal,fuera_zona,retraso_horario,velocidad_excesiva,combustible_bajo,mantenimiento_vencido',
             'priority' => 'required|in:critica,alta,media,baja',
-            'vehicle_id' => 'nullable|exists:vehicles,id',
+            'vehicle_id' => 'required|exists:vehicles,id',
             'route_id' => 'nullable|exists:routes,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'location_address' => 'nullable|string|max:255',
             'assigned_to' => 'nullable|exists:users,id',
             'metadata' => 'nullable|array',
         ]);
+
+        // Obtener la ubicación del vehículo seleccionado
+        $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
 
         $validated['code'] = $this->generateAlertCode();
         $validated['created_by'] = Auth::id();
         $validated['detected_at'] = now();
         $validated['status'] = 'activa';
+
+        // Asignar ubicación del vehículo
+        $validated['latitude'] = $vehicle->current_lat;
+        $validated['longitude'] = $vehicle->current_lng;
+        $validated['location_address'] = $vehicle->current_lat && $vehicle->current_lng
+            ? "Ubicación del vehículo {$vehicle->license_plate}"
+            : "Vehículo {$vehicle->license_plate} - Sin ubicación GPS";
 
         $alert = Alert::create($validated);
 
@@ -477,13 +486,8 @@ class AlertController extends Controller
             'type' => 'required|in:desvio_ruta,parada_prolongada,perdida_senal,fuera_zona,retraso_horario,velocidad_excesiva,combustible_bajo,mantenimiento_vencido',
             'priority' => 'required|in:critica,alta,media,baja',
             'status' => 'required|in:activa,reconocida,resuelta,descartada',
-            'vehicle_id' => 'nullable|exists:vehicles,id',
-            'route_id' => 'nullable|exists:routes,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'location_address' => 'nullable|string|max:255',
             'assigned_to' => 'nullable|exists:users,id',
             'metadata' => 'nullable|array',
         ]);
@@ -592,8 +596,9 @@ class AlertController extends Controller
             'latitude' => $vehicle->current_location ? $vehicle->current_location['lat'] : null,
             'longitude' => $vehicle->current_location ? $vehicle->current_location['lng'] : null,
             'location_address' => 'Ubicación simulada - ' . $vehicle->license_plate,
-            'created_by' => Auth::id(),
+            'created_by' => Auth::id() ?? 1, // Usar usuario ID 1 si no hay autenticación
             'detected_at' => now(),
+            'status' => 'activa',
             'metadata' => [
                 'simulated' => true,
                 'simulation_time' => now()->toISOString(),

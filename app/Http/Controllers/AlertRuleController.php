@@ -38,7 +38,6 @@ class AlertRuleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:alert_rules,code',
             'type' => 'required|string|in:desvio_ruta,parada_prolongada,velocidad_excesiva,combustible_bajo,mantenimiento_vencido,zona_restringida',
             'priority' => 'required|string|in:baja,media,alta,critica',
             'description' => 'nullable|string',
@@ -50,6 +49,9 @@ class AlertRuleController extends Controller
             'active_days.*' => 'integer|between:0,6',
             'is_active' => 'boolean'
         ]);
+
+        // Generar código automático
+        $validated['code'] = $this->generateRuleCode();
 
         // Convertir array de días a JSON
         if (isset($validated['active_days'])) {
@@ -89,7 +91,6 @@ class AlertRuleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:alert_rules,code,' . $alertRule->id,
             'type' => 'required|string|in:desvio_ruta,parada_prolongada,velocidad_excesiva,combustible_bajo,mantenimiento_vencido,zona_restringida',
             'priority' => 'required|string|in:baja,media,alta,critica',
             'description' => 'nullable|string',
@@ -137,5 +138,17 @@ class AlertRuleController extends Controller
 
         return redirect()->back()
             ->with('success', "Regla {$status} exitosamente.");
+    }
+
+    /**
+     * Generate unique alert rule code
+     */
+    private function generateRuleCode(): string
+    {
+        do {
+            $code = 'AR-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } while (AlertRule::where('code', $code)->exists());
+
+        return $code;
     }
 }

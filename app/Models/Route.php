@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
 
 class Route extends Model
@@ -74,6 +75,11 @@ class Route extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(Alert::class);
     }
 
     // Scopes

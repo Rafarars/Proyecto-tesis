@@ -83,6 +83,12 @@ class Vehicle extends Model
         return $this->hasMany(Route::class, 'assigned_vehicle_id');
     }
 
+    // Alias para compatibilidad con reportes
+    public function routes(): HasMany
+    {
+        return $this->assignedRoutes();
+    }
+
     public function currentRoute(): HasOne
     {
         return $this->hasOne(Route::class, 'assigned_vehicle_id')

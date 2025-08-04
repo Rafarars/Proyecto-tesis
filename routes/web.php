@@ -6,6 +6,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AlertRuleController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('alert-rules', AlertRuleController::class);
     Route::get('/alerts/rules/create', [AlertRuleController::class, 'create'])->name('alerts.rules.create');
     Route::patch('/alert-rules/{alertRule}/toggle', [AlertRuleController::class, 'toggle'])->name('alert-rules.toggle');
+
+    // Módulo de reportes y análisis
+    Route::get('/reportes', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/api/reports/export/{type}', [ReportController::class, 'export'])->name('reports.export');
 });
 
 // Rutas de prueba para funcionalidades espaciales (sin autenticación para facilitar pruebas)

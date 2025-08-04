@@ -47,16 +47,13 @@
                         </div>
 
                         <div>
-                            <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Código de la Regla</label>
-                            <input
-                                id="code"
-                                v-model="form.code"
-                                type="text"
-                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                                placeholder="Ej: RULE-001"
-                                required
-                            />
-                            <div v-if="form.errors.code" class="mt-2 text-sm text-red-600">{{ form.errors.code }}</div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Código de la Regla</label>
+                            <div class="w-full h-11 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-slate-600 text-gray-600 dark:text-gray-400 shadow-sm flex items-center">
+                                <span class="text-sm">🔄 Se generará automáticamente</span>
+                            </div>
+                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                💡 El código se asignará automáticamente al crear la regla (formato: AR-XXXX)
+                            </div>
                         </div>
 
                         <div>
@@ -254,7 +251,6 @@ const breadcrumbs = [
 
 const form = useForm({
     name: '',
-    code: '',
     type: '',
     priority: '',
     description: '',

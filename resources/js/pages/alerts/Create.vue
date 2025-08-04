@@ -145,50 +145,54 @@
                     <div v-if="form.errors.description" class="text-red-600 text-sm mt-1">{{ form.errors.description }}</div>
                 </div>
 
-                <!-- Ubicación -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <label for="latitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Latitud
-                        </label>
-                        <input
-                            id="latitude"
-                            v-model="form.latitude"
-                            type="number"
-                            step="any"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="10.6678"
-                        >
-                        <div v-if="form.errors.latitude" class="text-red-600 text-sm mt-1">{{ form.errors.latitude }}</div>
+                <!-- Ubicación del Vehículo -->
+                <div v-if="selectedVehicle" class="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        📍 Ubicación del Vehículo
+                    </h3>
+
+                    <div v-if="selectedVehicle.current_location" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Latitud
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white font-mono bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ selectedVehicle.current_location.lat }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Longitud
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white font-mono bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ selectedVehicle.current_location.lng }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Última Actualización
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ formatLocationUpdate(selectedVehicle.location_updated_at) }}
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="longitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Longitud
-                        </label>
-                        <input
-                            id="longitude"
-                            v-model="form.longitude"
-                            type="number"
-                            step="any"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="-63.2583"
-                        >
-                        <div v-if="form.errors.longitude" class="text-red-600 text-sm mt-1">{{ form.errors.longitude }}</div>
+                    <div v-else class="text-center py-4">
+                        <div class="text-yellow-600 dark:text-yellow-400 text-sm">
+                            ⚠️ Este vehículo no tiene ubicación GPS registrada
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            La alerta se creará sin coordenadas específicas
+                        </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label for="location_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Dirección
-                        </label>
-                        <input
-                            id="location_address"
-                            v-model="form.location_address"
-                            type="text"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="Dirección de la alerta"
-                        >
-                        <div v-if="form.errors.location_address" class="text-red-600 text-sm mt-1">{{ form.errors.location_address }}</div>
+                <div v-else-if="form.vehicle_id === ''" class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                    <div class="text-blue-700 dark:text-blue-300 text-sm text-center">
+                        ℹ️ Selecciona un vehículo para ver su ubicación actual
                     </div>
                 </div>
 
@@ -236,6 +240,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 
@@ -267,11 +272,33 @@ const form = useForm({
     route_id: '',
     title: '',
     description: '',
-    latitude: '',
-    longitude: '',
-    location_address: '',
     assigned_to: '',
 })
+
+// Computed para obtener el vehículo seleccionado
+const selectedVehicle = computed(() => {
+    if (!form.vehicle_id) return null
+    return props.vehicles.find(vehicle => vehicle.id == form.vehicle_id)
+})
+
+// Función para formatear la fecha de actualización de ubicación
+const formatLocationUpdate = (dateString) => {
+    if (!dateString) return 'No disponible'
+
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now - date
+    const diffMins = Math.floor(diffMs / 60000)
+
+    if (diffMins < 1) return 'Hace menos de 1 minuto'
+    if (diffMins < 60) return `Hace ${diffMins} minuto${diffMins > 1 ? 's' : ''}`
+
+    const diffHours = Math.floor(diffMins / 60)
+    if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`
+
+    const diffDays = Math.floor(diffHours / 24)
+    return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`
+}
 
 const submit = () => {
     form.post(route('alerts.store'), {

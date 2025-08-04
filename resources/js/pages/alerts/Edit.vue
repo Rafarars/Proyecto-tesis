@@ -147,50 +147,49 @@
                     <div v-if="form.errors.description" class="text-red-600 text-sm mt-1">{{ form.errors.description }}</div>
                 </div>
 
-                <!-- Ubicación -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <label for="latitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Latitud
-                        </label>
-                        <input
-                            id="latitude"
-                            v-model="form.latitude"
-                            type="number"
-                            step="any"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="10.6678"
-                        >
-                        <div v-if="form.errors.latitude" class="text-red-600 text-sm mt-1">{{ form.errors.latitude }}</div>
+                <!-- Ubicación de la Alerta -->
+                <div class="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        📍 Ubicación de la Alerta
+                    </h3>
+
+                    <div v-if="alert.latitude && alert.longitude" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Latitud
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white font-mono bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ alert.latitude }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Longitud
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white font-mono bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ alert.longitude }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                Dirección
+                            </label>
+                            <div class="text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-700 px-3 py-2 rounded border">
+                                {{ alert.location_address || 'No especificada' }}
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="longitude" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Longitud
-                        </label>
-                        <input
-                            id="longitude"
-                            v-model="form.longitude"
-                            type="number"
-                            step="any"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="-63.2583"
-                        >
-                        <div v-if="form.errors.longitude" class="text-red-600 text-sm mt-1">{{ form.errors.longitude }}</div>
+                    <div v-else class="text-center py-4">
+                        <div class="text-yellow-600 dark:text-yellow-400 text-sm">
+                            ⚠️ Esta alerta no tiene ubicación GPS registrada
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="location_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Dirección
-                        </label>
-                        <input
-                            id="location_address"
-                            v-model="form.location_address"
-                            type="text"
-                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
-                            placeholder="Dirección de la alerta"
-                        >
-                        <div v-if="form.errors.location_address" class="text-red-600 text-sm mt-1">{{ form.errors.location_address }}</div>
+                    <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        💡 La ubicación se asigna automáticamente basada en la posición del vehículo al momento de crear la alerta
                     </div>
                 </div>
 
@@ -268,9 +267,6 @@ const form = useForm({
     status: props.alert.status || '',
     title: props.alert.title || '',
     description: props.alert.description || '',
-    latitude: props.alert.latitude || '',
-    longitude: props.alert.longitude || '',
-    location_address: props.alert.location_address || '',
     assigned_to: props.alert.assigned_to || '',
     resolution_notes: props.alert.resolution_notes || '',
 })
