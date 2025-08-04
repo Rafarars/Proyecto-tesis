@@ -211,7 +211,7 @@ class ReportController extends Controller
         ];
 
         // Rutas por estado
-        $routesByStatus = $routes->groupBy('status')->map(function ($group, $status) {
+        $routesByStatus = $routes->groupBy('status')->map(function ($group, $status) use ($routes) {
             return [
                 'status' => $status,
                 'count' => $group->count(),
@@ -274,7 +274,7 @@ class ReportController extends Controller
             ];
         })->values()->toArray();
 
-        $alertsBySeverity = $alerts->groupBy('severity')->map(function ($group, $severity) {
+        $alertsBySeverity = $alerts->groupBy('severity')->map(function ($group, $severity) use ($alerts) {
             return [
                 'severity' => $severity,
                 'count' => $group->count(),
@@ -591,21 +591,89 @@ class ReportController extends Controller
 
     private function exportToPdf(array $data, string $panel)
     {
-        // Placeholder para implementación de PDF
-        // Se puede usar DomPDF o similar
-        return response()->json([
-            'message' => 'Exportación a PDF en desarrollo',
-            'data' => $data
+        // Generar contenido HTML para el PDF
+        $html = $this->generateReportHtml($data, $panel);
+
+        // Por ahora, devolver el HTML como respuesta
+        // En producción se usaría DomPDF o similar
+        return response($html, 200, [
+            'Content-Type' => 'text/html',
+            'Content-Disposition' => 'attachment; filename="reporte_' . $panel . '_' . date('Y-m-d') . '.html"'
         ]);
     }
 
     private function exportToExcel(array $data, string $panel)
     {
-        // Placeholder para implementación de Excel
-        // Se puede usar Laravel Excel
-        return response()->json([
-            'message' => 'Exportación a Excel en desarrollo',
-            'data' => $data
+        // Generar CSV como alternativa a Excel
+        $csv = $this->generateReportCsv($data, $panel);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="reporte_' . $panel . '_' . date('Y-m-d') . '.csv"'
         ]);
+    }
+
+    private function generateReportHtml(array $data, string $panel): string
+    {
+        $title = $this->getReportTitle($panel);
+        $date = date('d/m/Y H:i');
+
+        $html = "<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>{$title}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .kpi { display: inline-block; margin: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                .kpi-value { font-size: 24px; font-weight: bold; color: #059669; }
+                .kpi-label { font-size: 14px; color: #666; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f5f5f5; }
+            </style>
+        </head>
+        <body>
+            <div class='header'>
+                <h1>{$title}</h1>
+                <p>Generado el: {$date}</p>
+            </div>";
+
+        // Agregar KPIs si existen
+        if (isset($data['panel_data']['kpis'])) {
+            $html .= "<div class='kpis'>";
+            foreach ($data['panel_data']['kpis'] as $key => $value) {
+                $label = ucfirst(str_replace('_', ' ', $key));
+                $html .= "<div class='kpi'>
+                    <div class='kpi-value'>" . number_format($value, 2) . "</div>
+                    <div class='kpi-label'>{$label}</div>
+                </div>";
+            }
+            $html .= "</div>";
+        }
+
+        $html .= "</body></html>";
+
+        return $html;
+    }
+
+    private function generateReportCsv(array $data, string $panel): string
+    {
+        $csv = "Reporte: " . $this->getReportTitle($panel) . "\n";
+        $csv .= "Fecha: " . date('d/m/Y H:i') . "\n\n";
+
+        // Agregar KPIs si existen
+        if (isset($data['panel_data']['kpis'])) {
+            $csv .= "KPIs Principales\n";
+            $csv .= "Métrica,Valor\n";
+            foreach ($data['panel_data']['kpis'] as $key => $value) {
+                $label = ucfirst(str_replace('_', ' ', $key));
+                $csv .= "\"{$label}\"," . number_format($value, 2) . "\n";
+            }
+            $csv .= "\n";
+        }
+
+        return $csv;
     }
 }

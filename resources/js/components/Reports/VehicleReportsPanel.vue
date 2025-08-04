@@ -10,12 +10,18 @@
                 </div>
                 <div class="h-64">
                     <DoughnutChart
-                        v-if="!loading && data.vehicles_by_type"
+                        v-if="!loading && vehicleTypeChartData"
                         :data="vehicleTypeChartData"
                         :options="doughnutOptions"
                     />
-                    <div v-else class="flex items-center justify-center h-full">
+                    <div v-else-if="loading" class="flex items-center justify-center h-full">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    </div>
+                    <div v-else class="flex items-center justify-center h-full text-gray-500">
+                        <div class="text-center">
+                            <PieChart class="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No hay datos de vehículos por tipo</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -28,12 +34,18 @@
                 </div>
                 <div class="h-64">
                     <BarChart
-                        v-if="!loading && data.maintenance_analysis"
+                        v-if="!loading && maintenanceChartData"
                         :data="maintenanceChartData"
                         :options="barOptions"
                     />
-                    <div v-else class="flex items-center justify-center h-full">
+                    <div v-else-if="loading" class="flex items-center justify-center h-full">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    </div>
+                    <div v-else class="flex items-center justify-center h-full text-gray-500">
+                        <div class="text-center">
+                            <Wrench class="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No hay datos de mantenimiento</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,7 +254,9 @@ const itemsPerPage = 10;
 
 // Datos computados para gráficos
 const vehicleTypeChartData = computed(() => {
-    if (!props.data.vehicles_by_type) return null;
+    if (!props.data?.vehicles_by_type || !Array.isArray(props.data.vehicles_by_type) || props.data.vehicles_by_type.length === 0) {
+        return null;
+    }
 
     const labels = props.data.vehicles_by_type.map((item: any) => formatVehicleType(item.type));
     const data = props.data.vehicles_by_type.map((item: any) => item.count);

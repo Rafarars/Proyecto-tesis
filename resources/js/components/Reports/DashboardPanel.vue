@@ -65,12 +65,18 @@
                 </div>
                 <div class="h-64">
                     <LineChart
-                        v-if="!loading && data.daily_trends"
+                        v-if="!loading && dailyTrendsChartData"
                         :data="dailyTrendsChartData"
                         :options="chartOptions"
                     />
-                    <div v-else class="flex items-center justify-center h-full">
+                    <div v-else-if="loading" class="flex items-center justify-center h-full">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    </div>
+                    <div v-else class="flex items-center justify-center h-full text-gray-500">
+                        <div class="text-center">
+                            <Activity class="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No hay datos de tendencias disponibles</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,12 +89,18 @@
                 </div>
                 <div class="h-64">
                     <DoughnutChart
-                        v-if="!loading && data.alert_distribution"
+                        v-if="!loading && alertDistributionChartData"
                         :data="alertDistributionChartData"
                         :options="doughnutOptions"
                     />
-                    <div v-else class="flex items-center justify-center h-full">
+                    <div v-else-if="loading" class="flex items-center justify-center h-full">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    </div>
+                    <div v-else class="flex items-center justify-center h-full text-gray-500">
+                        <div class="text-center">
+                            <PieChart class="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No hay datos de alertas disponibles</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -198,7 +210,9 @@ const formatCurrency = (value: number): string => {
 
 // Datos para gráfico de tendencias diarias
 const dailyTrendsChartData = computed(() => {
-    if (!props.data.daily_trends) return null;
+    if (!props.data?.daily_trends || !Array.isArray(props.data.daily_trends) || props.data.daily_trends.length === 0) {
+        return null;
+    }
 
     const labels = props.data.daily_trends.map((item: any) => {
         const date = new Date(item.date);
@@ -235,7 +249,9 @@ const dailyTrendsChartData = computed(() => {
 
 // Datos para gráfico de distribución de alertas
 const alertDistributionChartData = computed(() => {
-    if (!props.data.alert_distribution) return null;
+    if (!props.data?.alert_distribution || typeof props.data.alert_distribution !== 'object') {
+        return null;
+    }
 
     const labels = Object.keys(props.data.alert_distribution);
     const data = Object.values(props.data.alert_distribution);
