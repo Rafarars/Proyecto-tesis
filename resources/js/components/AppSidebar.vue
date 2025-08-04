@@ -45,11 +45,6 @@ const mainNavItems: NavItem[] = [
         icon: BarChart3,
     },
     {
-        title: 'Gestión de Usuarios',
-        href: '/usuarios',
-        icon: Users,
-    },
-    {
         title: 'Configuración',
         href: '/configuracion',
         icon: Settings,
