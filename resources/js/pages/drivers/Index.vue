@@ -1,139 +1,106 @@
 <template>
     <AppLayout title="Gestión de Usuarios" :breadcrumbs="breadcrumbs">
-        <template #header>
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Gestión de Usuarios
-                    </h2>
-                    <p class="text-sm text-gray-600 mt-1">
-                        Administra los conductores y personal del sistema de geolocalización
-                    </p>
+        <!-- Panel de título -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 mb-6 border border-emerald-200 dark:border-emerald-800 ring-1 ring-gray-900/5 dark:ring-white/10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
+                        <Users class="h-8 w-8 text-white" />
+                    </div>
+                    <div class="flex-1">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestión de Usuarios</h1>
+                        <p class="text-gray-600 dark:text-gray-300 mt-1">Administra los conductores y personal del sistema de geolocalización</p>
+                    </div>
                 </div>
-                <Link
-                    :href="route('drivers.create')"
-                    class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                >
-                    <UserPlus class="h-4 w-4 mr-2" />
-                    Nuevo Conductor
-                </Link>
+                <div class="flex-shrink-0">
+                    <Link
+                        :href="route('drivers.create')"
+                        class="inline-flex items-center bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        <UserPlus class="w-5 h-5 mr-2" />
+                        Nuevo Conductor
+                    </Link>
+                </div>
             </div>
-        </template>
+        </div>
 
         <!-- Estadísticas -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <Users class="h-8 w-8 text-blue-500" />
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Total Conductores
-                                </dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ stats.total }}
-                                </dd>
-                            </dl>
-                        </div>
+            <!-- Total Conductores -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 border-l-4 border-blue-500 hover:shadow-2xl transition-all duration-300 ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Conductores</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total }}</p>
+                    </div>
+                    <div class="p-3 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-md">
+                        <Users class="h-8 w-8 text-blue-600 dark:text-blue-400" />
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <CheckCircle class="h-8 w-8 text-emerald-500" />
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Activos
-                                </dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ stats.active }}
-                                </dd>
-                            </dl>
-                        </div>
+            <!-- Activos -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 border-l-4 border-green-500 hover:shadow-2xl transition-all duration-300 ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Activos</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.active }}</p>
+                    </div>
+                    <div class="p-3 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-xl shadow-md">
+                        <CheckCircle class="h-8 w-8 text-green-600 dark:text-green-400" />
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <AlertTriangle class="h-8 w-8 text-red-500" />
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Licencias Vencidas
-                                </dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ stats.expired_licenses }}
-                                </dd>
-                            </dl>
-                        </div>
+            <!-- Licencias Vencidas -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 border-l-4 border-red-500 hover:shadow-2xl transition-all duration-300 ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Licencias Vencidas</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.expired_licenses }}</p>
+                    </div>
+                    <div class="p-3 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/30 dark:to-red-800/30 rounded-xl shadow-md">
+                        <AlertTriangle class="h-8 w-8 text-red-600 dark:text-red-400" />
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-                <div class="p-6">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <Heart class="h-8 w-8 text-orange-500" />
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Exámenes Médicos Vencidos
-                                </dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ stats.expired_medical }}
-                                </dd>
-                            </dl>
-                        </div>
+            <!-- Exámenes Médicos Vencidos -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 border-l-4 border-orange-500 hover:shadow-2xl transition-all duration-300 ring-1 ring-gray-900/5 dark:ring-white/10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Exámenes Médicos Vencidos</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.expired_medical }}</p>
+                    </div>
+                    <div class="p-3 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 rounded-xl shadow-md">
+                        <Heart class="h-8 w-8 text-orange-600 dark:text-orange-400" />
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filtros y búsqueda -->
-        <div class="bg-white shadow-sm rounded-lg border border-gray-200 mb-6">
-            <div class="p-6">
+        <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl mb-6 border-l-4 border-gray-400 dark:border-gray-600 ring-1 ring-gray-900/5 dark:ring-white/10">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <!-- Búsqueda -->
                     <div class="md:col-span-2">
-                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
-                            Buscar
-                        </label>
-                        <div class="relative">
-                            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <input
-                                id="search"
-                                v-model="searchForm.search"
-                                type="text"
-                                placeholder="Nombre, código, documento, licencia..."
-                                class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-                                @input="debouncedSearch"
-                            />
-                        </div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Buscar</label>
+                        <input
+                            v-model="searchForm.search"
+                            type="text"
+                            placeholder="Placa, código o marca..."
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            @input="debouncedSearch"
+                        >
                     </div>
 
                     <!-- Filtro por estado -->
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
-                            Estado
-                        </label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado</label>
                         <select
-                            id="status"
                             v-model="searchForm.status"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
                             @change="search"
                         >
                             <option value="">Todos los estados</option>
@@ -147,13 +114,10 @@
 
                     <!-- Filtro por turno -->
                     <div>
-                        <label for="shift" class="block text-sm font-medium text-gray-700 mb-1">
-                            Turno
-                        </label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Turno</label>
                         <select
-                            id="shift"
                             v-model="searchForm.shift"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
                             @change="search"
                         >
                             <option value="">Todos los turnos</option>
@@ -166,13 +130,10 @@
 
                     <!-- Filtro por estado de licencia -->
                     <div>
-                        <label for="license_status" class="block text-sm font-medium text-gray-700 mb-1">
-                            Estado Licencia
-                        </label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado Licencia</label>
                         <select
-                            id="license_status"
                             v-model="searchForm.license_status"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
                             @change="search"
                         >
                             <option value="">Todos</option>
@@ -197,7 +158,7 @@
         </div>
 
         <!-- Tabla de conductores -->
-        <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
