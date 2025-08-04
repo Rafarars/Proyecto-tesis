@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="Gestión de Usuarios">
+    <AppLayout title="Gestión de Usuarios" :breadcrumbs="breadcrumbs">
         <template #header>
             <div class="flex justify-between items-center">
                 <div>
@@ -22,7 +22,7 @@
 
         <!-- Estadísticas -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
                 <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
                 <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
                 <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
                 <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -104,7 +104,7 @@
         </div>
 
         <!-- Filtros y búsqueda -->
-        <div class="bg-white shadow-sm rounded-lg mb-6">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200 mb-6">
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <!-- Búsqueda -->
@@ -197,7 +197,7 @@
         </div>
 
         <!-- Tabla de conductores -->
-        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -405,6 +405,11 @@ const props = defineProps({
     filters: Object,
     sort: Object,
 });
+
+// Breadcrumbs
+const breadcrumbs = computed(() => [
+    { name: 'Gestión de Usuarios', href: '#' },
+]);
 
 // Estado reactivo
 const showDeleteModal = ref(false);
