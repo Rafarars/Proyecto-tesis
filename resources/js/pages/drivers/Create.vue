@@ -94,9 +94,17 @@
                                 v-model="form.document_number"
                                 type="text"
                                 required
-                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                                :class="[
+                                    'w-full h-11 px-4 rounded-lg border-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm transition-colors',
+                                    form.errors.document_number
+                                        ? 'border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-800'
+                                        : 'border-gray-300 dark:border-gray-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800'
+                                ]"
                                 placeholder="Ej: 12345678"
                             >
+                            <div v-if="form.errors.document_number" class="mt-1 text-sm text-red-600 dark:text-red-400">
+                                {{ form.errors.document_number }}
+                            </div>
                         </div>
 
                         <!-- Fecha de nacimiento -->
@@ -387,6 +395,13 @@ const submit = () => {
     form.post(route('drivers.store'), {
         onSuccess: () => {
             // Redirect will be handled by the controller
+            console.log('Driver created successfully');
+        },
+        onError: (errors) => {
+            console.error('Validation errors:', errors);
+        },
+        onFinish: () => {
+            console.log('Request finished');
         }
     });
 };

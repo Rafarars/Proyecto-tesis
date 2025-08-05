@@ -38,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // CRUD de conductores
     Route::resource('drivers', DriverController::class);
 
+
+
     // Rutas adicionales para conductores
     Route::post('/drivers/{driver}/assign-vehicle', [DriverController::class, 'assignVehicle'])->name('drivers.assign-vehicle');
     Route::delete('/drivers/{driver}/unassign-vehicle', [DriverController::class, 'unassignVehicle'])->name('drivers.unassign-vehicle');

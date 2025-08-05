@@ -157,6 +157,15 @@
             </div>
         </div>
 
+        <!-- Debug info -->
+        <div v-if="false" class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <p><strong>Debug:</strong></p>
+            <p>drivers exists: {{ !!drivers }}</p>
+            <p>drivers.data exists: {{ !!(drivers && drivers.data) }}</p>
+            <p>drivers.data.length: {{ drivers && drivers.data ? drivers.data.length : 'N/A' }}</p>
+            <p>drivers structure: {{ JSON.stringify(drivers, null, 2) }}</p>
+        </div>
+
         <!-- Tabla de conductores -->
         <div v-if="drivers && drivers.data && drivers.data.length > 0" class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
             <div class="overflow-x-auto">
