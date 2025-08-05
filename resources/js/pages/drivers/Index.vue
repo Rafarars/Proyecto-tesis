@@ -304,6 +304,14 @@
                 <p class="mt-1 text-sm text-gray-500">
                     Comienza agregando un nuevo conductor al sistema.
                 </p>
+                <!-- Debug info -->
+                <div class="mt-4 p-4 bg-gray-100 rounded text-left text-xs">
+                    <p><strong>Debug Info:</strong></p>
+                    <p>Drivers object: {{ drivers }}</p>
+                    <p>Drivers.data: {{ drivers?.data }}</p>
+                    <p>Drivers.data.length: {{ drivers?.data?.length }}</p>
+                    <p>Stats: {{ stats }}</p>
+                </div>
                 <div class="mt-6">
                     <Link
                         :href="route('drivers.create')"
@@ -376,6 +384,11 @@ const props = defineProps({
     filters: Object,
     sort: Object,
 });
+
+// Debug logs
+console.log('Drivers data:', props.drivers);
+console.log('Drivers data length:', props.drivers?.data?.length);
+console.log('Stats:', props.stats);
 
 // Breadcrumbs
 const breadcrumbs = [

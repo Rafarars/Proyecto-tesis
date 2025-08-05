@@ -68,6 +68,14 @@ class DriverController extends Controller
                                      ->where('medical_exam_expiry', '<=', now())->count(),
         ];
 
+        Log::info('Drivers index data:', [
+            'drivers_count' => $drivers->count(),
+            'total' => $drivers->total(),
+            'drivers_data_count' => count($drivers->items()),
+            'first_driver' => $drivers->first() ? $drivers->first()->toArray() : null,
+            'stats' => $stats
+        ]);
+
         return Inertia::render('drivers/Index', [
             'drivers' => $drivers,
             'stats' => $stats,
