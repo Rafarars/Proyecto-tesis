@@ -187,10 +187,26 @@
                                         <span class="text-sm font-medium text-gray-900 dark:text-white">{{ currentVehicle.model }}</span>
                                     </div>
                                 </div>
+                                <div class="mt-3 space-y-2">
+                                    <button
+                                        @click="showUnassignModal = true"
+                                        class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                                    >
+                                        <X class="w-4 h-4 mr-2" />
+                                        Desasignar Vehículo
+                                    </button>
+                                </div>
                             </div>
                             <div v-else class="text-center py-6">
                                 <Truck class="h-10 w-10 text-gray-400 mx-auto mb-2" />
-                                <p class="text-gray-500 dark:text-gray-400 text-sm">Sin vehículo asignado</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Sin vehículo asignado</p>
+                                <button
+                                    @click="showAssignModal = true"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto"
+                                >
+                                    <Plus class="w-4 h-4 mr-2" />
+                                    Asignar Vehículo
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -250,6 +266,82 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal para asignar vehículo -->
+        <Modal :show="showAssignModal" @close="showAssignModal = false">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    Asignar Vehículo a {{ driver.first_name }} {{ driver.last_name }}
+                </h2>
+
+                <form @submit.prevent="assignVehicle">
+                    <div class="mb-4">
+                        <label for="vehicle_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Seleccionar Vehículo
+                        </label>
+                        <select
+                            id="vehicle_id"
+                            v-model="assignForm.vehicle_id"
+                            required
+                            class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                        >
+                            <option value="">Seleccionar vehículo...</option>
+                            <option
+                                v-for="vehicle in availableVehicles"
+                                :key="vehicle.id"
+                                :value="vehicle.id"
+                            >
+                                {{ vehicle.license_plate }} - {{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.code }})
+                            </option>
+                        </select>
+                        <p v-if="availableVehicles.length === 0" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            No hay vehículos disponibles para asignar.
+                        </p>
+                    </div>
+
+                    <div class="flex justify-end space-x-3">
+                        <SecondaryButton @click="showAssignModal = false">
+                            Cancelar
+                        </SecondaryButton>
+                        <button
+                            type="submit"
+                            :disabled="assignForm.processing || !assignForm.vehicle_id"
+                            class="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            {{ assignForm.processing ? 'Asignando...' : 'Asignar Vehículo' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- Modal para desasignar vehículo -->
+        <ConfirmationModal :show="showUnassignModal" @close="showUnassignModal = false">
+            <template #title>
+                Desasignar Vehículo
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que quieres desasignar el vehículo {{ currentVehicle?.license_plate }} del conductor {{ driver.first_name }} {{ driver.last_name }}?
+                <br><br>
+                El vehículo quedará disponible para ser asignado a otro conductor.
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="showUnassignModal = false">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton
+                    class="ms-3"
+                    :class="{ 'opacity-25': unassignForm.processing }"
+                    :disabled="unassignForm.processing"
+                    @click="unassignVehicle"
+                >
+                    {{ unassignForm.processing ? 'Desasignando...' : 'Desasignar Vehículo' }}
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
