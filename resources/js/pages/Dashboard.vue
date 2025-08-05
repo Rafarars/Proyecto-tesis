@@ -2,6 +2,22 @@
     <Head title="Panel Principal" />
 
     <AppLayout title="Panel Principal" :breadcrumbs="breadcrumbs">
+        <!-- Título del Sistema -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-6 border border-emerald-200 dark:border-emerald-800">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-lg">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Sistema de Geolocalización Carúpano</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">Panel de control y monitoreo de vehículos de recolección</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Estadísticas principales -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Vehículos Activos -->
@@ -126,7 +142,7 @@
                         <span class="font-medium">Ver Alertas</span>
                     </button>
                     <button
-                        @click="router.visit('/reports')"
+                        @click="router.visit('/reportes')"
                         class="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                         <BarChart3 class="h-5 w-5" />
