@@ -364,58 +364,59 @@
     </div>
 
     <!-- Modal para asignar conductor -->
-    <div v-if="showAssignModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="showAssignModal = false"></div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Asignar Conductor a {{ vehicle.license_plate }}
-            </h3>
-            <form @submit.prevent="assignDriver">
-              <div class="mb-4">
-                <label for="driver_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Seleccionar Conductor
-                </label>
-                <select
-                  id="driver_id"
-                  v-model="assignForm.driver_id"
-                  required
-                  class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 transition-colors"
-                >
-                  <option value="">Seleccionar conductor...</option>
-                  <option
-                    v-for="driver in availableDrivers"
-                    :key="driver.id"
-                    :value="driver.id"
-                  >
-                    {{ driver.first_name }} {{ driver.last_name }} - {{ driver.employee_code }} ({{ driver.license_type }})
-                  </option>
-                </select>
-                <p v-if="availableDrivers.length === 0" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  No hay conductores disponibles para asignar.
-                </p>
-              </div>
-              <div class="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  @click="showAssignModal = false"
-                  class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  :disabled="assignForm.processing || !assignForm.driver_id"
-                  class="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-                >
-                  {{ assignForm.processing ? 'Asignando...' : 'Asignar Conductor' }}
-                </button>
-              </div>
-            </form>
-          </div>
+    <div v-if="showAssignModal" class="fixed inset-0 z-[9999] overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+          Asignar Conductor a {{ vehicle.license_plate }}
+        </h3>
+
+        <!-- Debug info -->
+        <div class="mb-4 p-2 bg-yellow-100 rounded text-sm">
+          <p>Conductores disponibles: {{ availableDrivers.length }}</p>
+          <p v-if="availableDrivers.length > 0">Primer conductor: {{ availableDrivers[0].first_name }} {{ availableDrivers[0].last_name }}</p>
         </div>
+
+        <form @submit.prevent="assignDriver">
+          <div class="mb-4">
+            <label for="driver_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Seleccionar Conductor
+            </label>
+            <select
+              id="driver_id"
+              v-model="assignForm.driver_id"
+              required
+              class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 transition-colors"
+            >
+              <option value="">Seleccionar conductor...</option>
+              <option
+                v-for="driver in availableDrivers"
+                :key="driver.id"
+                :value="driver.id"
+              >
+                {{ driver.first_name }} {{ driver.last_name }} - {{ driver.employee_code }} ({{ driver.license_type }})
+              </option>
+            </select>
+            <p v-if="availableDrivers.length === 0" class="mt-2 text-sm text-red-500">
+              No hay conductores disponibles para asignar.
+            </p>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              @click="showAssignModal = false"
+              class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              :disabled="assignForm.processing || !assignForm.driver_id"
+              class="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            >
+              {{ assignForm.processing ? 'Asignando...' : 'Asignar Conductor' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
