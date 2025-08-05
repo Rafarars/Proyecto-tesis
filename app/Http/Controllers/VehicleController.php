@@ -58,6 +58,14 @@ class VehicleController extends Controller
             $query->latest()->limit(5);
         }, 'currentRoute']);
 
+        // Obtener conductores disponibles para asignar
+        $availableDrivers = Driver::whereDoesntHave('vehicles', function($query) use ($vehicle) {
+                                $query->where('id', '!=', $vehicle->id);
+                            })
+                            ->where('status', 'activo')
+                            ->where('is_active', true)
+                            ->get(['id', 'first_name', 'last_name', 'employee_code', 'license_number', 'license_type']);
+
         return Inertia::render('vehicles/Show', [
             'vehicle' => [
                 'id' => $vehicle->id,
@@ -119,7 +127,8 @@ class VehicleController extends Controller
                 }),
                 'created_at' => $vehicle->created_at,
                 'updated_at' => $vehicle->updated_at,
-            ]
+            ],
+            'availableDrivers' => $availableDrivers
         ]);
     }
 
@@ -403,5 +412,45 @@ class VehicleController extends Controller
             'active_count' => $vehicles->where('status', 'activo')->count(),
             'last_updated' => now()->toISOString(),
         ]);
+    }
+
+    /**
+     * Assign a driver to a vehicle.
+     */
+    public function assignDriver(Request $request, Vehicle $vehicle)
+    {
+        $validated = $request->validate([
+            'driver_id' => 'required|exists:drivers,id',
+        ]);
+
+        $driver = Driver::findOrFail($validated['driver_id']);
+
+        // Verificar que el conductor no esté asignado a otro vehículo
+        if ($driver->currentVehicle() && $driver->currentVehicle()->id !== $vehicle->id) {
+            return redirect()->back()
+                            ->with('error', 'El conductor ya está asignado a otro vehículo.');
+        }
+
+        // Desasignar conductor anterior del vehículo si existe
+        if ($vehicle->driver_id) {
+            $vehicle->update(['driver_id' => null]);
+        }
+
+        // Asignar nuevo conductor
+        $vehicle->update(['driver_id' => $driver->id]);
+
+        return redirect()->back()
+                        ->with('success', 'Conductor asignado exitosamente.');
+    }
+
+    /**
+     * Unassign driver from vehicle.
+     */
+    public function unassignDriver(Vehicle $vehicle)
+    {
+        $vehicle->update(['driver_id' => null]);
+
+        return redirect()->back()
+                        ->with('success', 'Conductor desasignado exitosamente.');
     }
 }

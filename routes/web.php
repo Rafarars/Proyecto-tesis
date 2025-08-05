@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas adicionales para vehículos
     Route::patch('/vehicles/{vehicle}/location', [VehicleController::class, 'updateLocation'])->name('vehicles.update-location');
     Route::get('/api/vehicles/nearby', [VehicleController::class, 'nearbyVehicles'])->name('vehicles.nearby');
+    Route::post('/vehicles/{vehicle}/assign-driver', [VehicleController::class, 'assignDriver'])->name('vehicles.assign-driver');
+    Route::delete('/vehicles/{vehicle}/unassign-driver', [VehicleController::class, 'unassignDriver'])->name('vehicles.unassign-driver');
 
     // CRUD de conductores
     Route::resource('drivers', DriverController::class);

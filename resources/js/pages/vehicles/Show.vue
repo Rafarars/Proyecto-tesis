@@ -208,12 +208,32 @@
                       <span class="text-gray-900 dark:text-white font-medium">{{ vehicle.driver.license_number }}</span>
                     </div>
                   </div>
+                  <div class="mt-4">
+                    <button
+                      @click="showUnassignModal = true"
+                      class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                    >
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                      Desasignar Conductor
+                    </button>
+                  </div>
                 </div>
                 <div v-else class="text-center py-8 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
                   <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
-                  <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Sin conductor asignado</p>
+                  <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 mb-3">Sin conductor asignado</p>
+                  <button
+                    @click="showAssignModal = true"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Asignar Conductor
+                  </button>
                 </div>
               </div>
             </div>
@@ -342,6 +362,110 @@
           </div>
         </div>
     </div>
+
+    <!-- Modal para asignar conductor -->
+    <div v-if="showAssignModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="showAssignModal = false"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              Asignar Conductor a {{ vehicle.license_plate }}
+            </h3>
+            <form @submit.prevent="assignDriver">
+              <div class="mb-4">
+                <label for="driver_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Seleccionar Conductor
+                </label>
+                <select
+                  id="driver_id"
+                  v-model="assignForm.driver_id"
+                  required
+                  class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 transition-colors"
+                >
+                  <option value="">Seleccionar conductor...</option>
+                  <option
+                    v-for="driver in availableDrivers"
+                    :key="driver.id"
+                    :value="driver.id"
+                  >
+                    {{ driver.first_name }} {{ driver.last_name }} - {{ driver.employee_code }} ({{ driver.license_type }})
+                  </option>
+                </select>
+                <p v-if="availableDrivers.length === 0" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  No hay conductores disponibles para asignar.
+                </p>
+              </div>
+              <div class="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  @click="showAssignModal = false"
+                  class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  :disabled="assignForm.processing || !assignForm.driver_id"
+                  class="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+                >
+                  {{ assignForm.processing ? 'Asignando...' : 'Asignar Conductor' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para desasignar conductor -->
+    <div v-if="showUnassignModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="showUnassignModal = false"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                  Desasignar Conductor
+                </h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    ¿Estás seguro de que quieres desasignar al conductor {{ vehicle.driver?.full_name }} del vehículo {{ vehicle.license_plate }}?
+                    <br><br>
+                    El conductor quedará disponible para ser asignado a otro vehículo.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 dark:bg-slate-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              @click="unassignDriver"
+              :disabled="unassignForm.processing"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+            >
+              {{ unassignForm.processing ? 'Desasignando...' : 'Desasignar' }}
+            </button>
+            <button
+              type="button"
+              @click="showUnassignModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-slate-600 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-slate-500"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -394,6 +518,14 @@ interface Props {
       estimated_duration_formatted: string
     }
   }
+  availableDrivers: Array<{
+    id: number
+    first_name: string
+    last_name: string
+    employee_code: string
+    license_number: string
+    license_type: string
+  }>
 }
 
 const props = defineProps<Props>()
@@ -507,5 +639,37 @@ const formatNumber = (number?: number) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
   }).format(number)
+}
+
+// Variables reactivas para modales
+import { ref } from 'vue'
+import { useForm } from '@inertiajs/vue3'
+
+const showAssignModal = ref(false)
+const showUnassignModal = ref(false)
+
+// Formularios
+const assignForm = useForm({
+  driver_id: ''
+})
+
+const unassignForm = useForm({})
+
+// Funciones de asignación
+const assignDriver = () => {
+  assignForm.post(route('vehicles.assign-driver', props.vehicle.id), {
+    onSuccess: () => {
+      showAssignModal.value = false
+      assignForm.reset()
+    }
+  })
+}
+
+const unassignDriver = () => {
+  unassignForm.delete(route('vehicles.unassign-driver', props.vehicle.id), {
+    onSuccess: () => {
+      showUnassignModal.value = false
+    }
+  })
 }
 </script>
