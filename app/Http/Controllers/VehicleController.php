@@ -59,12 +59,21 @@ class VehicleController extends Controller
         }, 'currentRoute']);
 
         // Obtener conductores disponibles para asignar
-        $availableDrivers = Driver::whereDoesntHave('vehicles', function($query) use ($vehicle) {
-                                $query->where('id', '!=', $vehicle->id);
+        // Buscar conductores que no estén asignados a ningún vehículo O que estén asignados al vehículo actual
+        $availableDrivers = Driver::where(function($query) use ($vehicle) {
+                                // Conductores sin vehículo asignado
+                                $query->whereNotIn('id', function($subQuery) use ($vehicle) {
+                                    $subQuery->select('driver_id')
+                                             ->from('vehicles')
+                                             ->whereNotNull('driver_id')
+                                             ->where('id', '!=', $vehicle->id);
+                                });
                             })
                             ->where('status', 'activo')
                             ->where('is_active', true)
                             ->get(['id', 'first_name', 'last_name', 'employee_code', 'license_number', 'license_type']);
+
+
 
         return Inertia::render('vehicles/Show', [
             'vehicle' => [
