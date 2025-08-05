@@ -661,6 +661,14 @@ const assignDriver = () => {
     onSuccess: () => {
       showAssignModal.value = false
       assignForm.reset()
+    },
+    onError: (errors) => {
+      console.error('Error assigning driver:', errors)
+      showAssignModal.value = false
+    },
+    onFinish: () => {
+      // Asegurar que el modal se cierre siempre
+      showAssignModal.value = false
     }
   })
 }
