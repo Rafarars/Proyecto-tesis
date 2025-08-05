@@ -122,6 +122,17 @@ class Route extends Model
             'assigned_at' => now(),
             'status' => 'activa'
         ]);
+
+        // Actualizar ubicación del vehículo al punto inicial de la ruta
+        if ($this->start_lat && $this->start_lng) {
+            $vehicle->update([
+                'current_lat' => $this->start_lat,
+                'current_lng' => $this->start_lng,
+                'location_updated_at' => now(),
+                'current_speed' => 0, // Vehículo inicia detenido
+                'status' => 'activo'
+            ]);
+        }
     }
 
     public function unassignVehicle(): void

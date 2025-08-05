@@ -669,6 +669,14 @@ const unassignDriver = () => {
   unassignForm.delete(route('vehicles.unassign-driver', props.vehicle.id), {
     onSuccess: () => {
       showUnassignModal.value = false
+    },
+    onError: (errors) => {
+      console.error('Error unassigning driver:', errors)
+      showUnassignModal.value = false
+    },
+    onFinish: () => {
+      // Asegurar que el modal se cierre siempre
+      showUnassignModal.value = false
     }
   })
 }

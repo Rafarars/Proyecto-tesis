@@ -54,9 +54,24 @@ class DriverController extends Controller
         $query->orderBy($sortField, $sortDirection);
 
         // Paginación con relaciones
-        $drivers = $query->with(['vehicles' => function($query) {
-            $query->where('status', 'activo');
-        }])->paginate(15)->withQueryString();
+        $drivers = $query->paginate(15)->withQueryString();
+
+        // Agregar vehículo actual a cada conductor
+        $drivers->getCollection()->transform(function ($driver) {
+            $currentVehicle = Vehicle::where('driver_id', $driver->id)
+                                   ->where('status', 'activo')
+                                   ->first();
+
+            $driver->current_vehicle = $currentVehicle ? [
+                'id' => $currentVehicle->id,
+                'license_plate' => $currentVehicle->license_plate,
+                'brand' => $currentVehicle->brand,
+                'model' => $currentVehicle->model,
+                'type' => $currentVehicle->type,
+            ] : null;
+
+            return $driver;
+        });
 
         // Estadísticas para el dashboard
         $stats = [

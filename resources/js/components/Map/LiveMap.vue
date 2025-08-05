@@ -359,20 +359,8 @@ const loadVehicles = async () => {
                 driver: vehicle.driver
             }))
         } else {
-            // Fallback a datos simulados si no hay vehículos en la BD
-            vehicles.value = [
-                {
-                    id: 1,
-                    license_plate: 'CAR-001',
-                    type: 'compactador',
-                    status: 'activo',
-                    current_location: { lat: 10.6678, lng: -63.2583 },
-                    speed: 25,
-                    updated_at: new Date().toISOString(),
-                    assigned_route: null,
-                    driver: null
-                }
-            ]
+            // No hay vehículos disponibles
+            vehicles.value = []
         }
 
         updateVehicleMarkers()

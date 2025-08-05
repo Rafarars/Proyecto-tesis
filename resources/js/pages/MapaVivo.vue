@@ -157,51 +157,9 @@ const stats = ref({
     alerts: 2
 })
 
-const onlineVehicles = ref([
-    {
-        id: 1,
-        license_plate: 'CAR-001',
-        type: 'Compactador',
-        speed: 25,
-        updated_at: new Date().toISOString()
-    },
-    {
-        id: 2,
-        license_plate: 'CAR-002',
-        type: 'Camión',
-        speed: 30,
-        updated_at: new Date().toISOString()
-    },
-    {
-        id: 3,
-        license_plate: 'CAR-003',
-        type: 'Pickup',
-        speed: 0,
-        updated_at: new Date().toISOString()
-    },
-    {
-        id: 4,
-        license_plate: 'CAR-004',
-        type: 'Van',
-        speed: 22,
-        updated_at: new Date().toISOString()
-    }
-])
+const onlineVehicles = ref([])
 
-const recentAlerts = ref([
-    {
-        id: 1,
-        message: 'Vehículo detenido por más de 15 minutos',
-        vehicle: 'CAR-003',
-        timestamp: new Date().toISOString()
-    },
-    {
-        id: 2,
-        message: 'Desvío detectado de la ruta asignada',
-        vehicle: 'CAR-001',
-        timestamp: new Date(Date.now() - 300000).toISOString() // 5 minutos atrás
-    }
-])
+const recentAlerts = ref([])
 
 const dailyStats = ref({
     totalDistance: '127.5',
@@ -219,22 +177,59 @@ const formatTime = (timestamp: string) => {
     })
 }
 
+// Funciones para cargar datos reales
+const loadVehicleData = async () => {
+    try {
+        const response = await fetch('/api/live-vehicles')
+        const data = await response.json()
+
+        if (data.vehicles) {
+            onlineVehicles.value = data.vehicles.map(vehicle => ({
+                id: vehicle.id,
+                license_plate: vehicle.license_plate,
+                type: vehicle.type,
+                speed: vehicle.current_speed || 0,
+                updated_at: vehicle.location_updated_at || new Date().toISOString()
+            }))
+
+            stats.value.activeVehicles = data.active_count || 0
+        }
+    } catch (error) {
+        console.error('Error loading vehicle data:', error)
+    }
+}
+
+const loadAlerts = async () => {
+    try {
+        const response = await fetch('/alerts')
+        const data = await response.json()
+
+        if (data.alerts) {
+            recentAlerts.value = data.alerts.slice(0, 5).map(alert => ({
+                id: alert.id,
+                message: alert.message,
+                vehicle: alert.vehicle_code || 'N/A',
+                timestamp: alert.created_at
+            }))
+
+            stats.value.alerts = data.alerts.filter(alert => alert.status === 'activa').length
+        }
+    } catch (error) {
+        console.error('Error loading alerts:', error)
+    }
+}
+
 // Lifecycle
 onMounted(() => {
-    // Simular actualizaciones periódicas de estadísticas
+    // Cargar datos iniciales
+    loadVehicleData()
+    loadAlerts()
+
+    // Actualizar datos cada 30 segundos
     setInterval(() => {
-        // Actualizar estadísticas simuladas
-        stats.value.activeVehicles = Math.floor(Math.random() * 2) + 3 // 3-4 vehículos
-        stats.value.alerts = Math.floor(Math.random() * 3) // 0-2 alertas
-        
-        // Actualizar velocidades de vehículos
-        onlineVehicles.value.forEach(vehicle => {
-            if (vehicle.id !== 3) { // CAR-003 está detenido
-                vehicle.speed = Math.floor(Math.random() * 20) + 15 // 15-35 km/h
-                vehicle.updated_at = new Date().toISOString()
-            }
-        })
-    }, 10000) // Cada 10 segundos
+        loadVehicleData()
+        loadAlerts()
+    }, 30000)
 })
 </script>
 
