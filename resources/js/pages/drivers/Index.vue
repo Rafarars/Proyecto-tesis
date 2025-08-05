@@ -158,7 +158,7 @@
         </div>
 
         <!-- Tabla de conductores -->
-        <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+        <div v-if="drivers && drivers.data && drivers.data.length > 0" class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -293,25 +293,20 @@
             </div>
 
             <!-- Paginación -->
-            <div v-if="drivers.data.length > 0" class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+            <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                 <Pagination :links="drivers.links" />
             </div>
+        </div>
 
-            <!-- Estado vacío -->
-            <div v-else class="text-center py-12">
+        <!-- Estado vacío -->
+        <div v-else class="bg-white dark:bg-slate-800 overflow-hidden shadow-xl sm:rounded-xl ring-1 ring-gray-900/5 dark:ring-white/10">
+            <div class="text-center py-12">
                 <Users class="mx-auto h-12 w-12 text-gray-400" />
                 <h3 class="mt-2 text-sm font-medium text-gray-900">No hay conductores</h3>
                 <p class="mt-1 text-sm text-gray-500">
                     Comienza agregando un nuevo conductor al sistema.
                 </p>
-                <!-- Debug info -->
-                <div class="mt-4 p-4 bg-gray-100 rounded text-left text-xs">
-                    <p><strong>Debug Info:</strong></p>
-                    <p>Drivers object: {{ drivers }}</p>
-                    <p>Drivers.data: {{ drivers?.data }}</p>
-                    <p>Drivers.data.length: {{ drivers?.data?.length }}</p>
-                    <p>Stats: {{ stats }}</p>
-                </div>
+
                 <div class="mt-6">
                     <Link
                         :href="route('drivers.create')"
@@ -385,10 +380,7 @@ const props = defineProps({
     sort: Object,
 });
 
-// Debug logs
-console.log('Drivers data:', props.drivers);
-console.log('Drivers data length:', props.drivers?.data?.length);
-console.log('Stats:', props.stats);
+
 
 // Breadcrumbs
 const breadcrumbs = [
