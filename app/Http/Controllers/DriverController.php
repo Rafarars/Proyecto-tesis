@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Driver;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 
@@ -68,13 +67,7 @@ class DriverController extends Controller
                                      ->where('medical_exam_expiry', '<=', now())->count(),
         ];
 
-        Log::info('Drivers index data:', [
-            'drivers_count' => $drivers->count(),
-            'total' => $drivers->total(),
-            'drivers_data_count' => count($drivers->items()),
-            'first_driver' => $drivers->first() ? $drivers->first()->toArray() : null,
-            'stats' => $stats
-        ]);
+
 
         return Inertia::render('drivers/Index', [
             'drivers' => $drivers,
@@ -105,8 +98,6 @@ class DriverController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info('Driver store request data:', $request->all());
-
         $validated = $request->validate([
             // Información personal
             'first_name' => 'required|string|max:255',
@@ -152,11 +143,7 @@ class DriverController extends Controller
         // Generar código de empleado automáticamente
         $validated['employee_code'] = $this->generateEmployeeCode();
 
-        Log::info('Driver validated data:', $validated);
-
         $driver = Driver::create($validated);
-
-        Log::info('Driver created successfully:', ['id' => $driver->id, 'employee_code' => $driver->employee_code]);
 
         // Si se asignó un vehículo, actualizar el vehículo
         if (isset($validated['vehicle_id']) && $validated['vehicle_id']) {
