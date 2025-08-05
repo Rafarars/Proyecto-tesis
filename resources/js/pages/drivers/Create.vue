@@ -261,6 +261,37 @@
                                 <option value="E">Tipo E - Vehículos especiales</option>
                             </select>
                         </div>
+
+                        <!-- Vencimiento de licencia -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Vencimiento de Licencia *
+                            </label>
+                            <input
+                                v-model="form.license_expiry"
+                                type="date"
+                                required
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            >
+                        </div>
+
+                        <!-- Turno de trabajo -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Turno de Trabajo *
+                            </label>
+                            <select
+                                v-model="form.shift"
+                                required
+                                class="w-full h-11 px-4 rounded-lg border-2 border-gray-300 dark:border-gray-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-800 transition-colors"
+                            >
+                                <option value="">Seleccionar turno</option>
+                                <option value="mañana">Mañana</option>
+                                <option value="tarde">Tarde</option>
+                                <option value="noche">Noche</option>
+                                <option value="rotativo">Rotativo</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -310,20 +341,44 @@ const breadcrumbs = [
 
 // Form
 const form = useForm({
+    // Información personal
     first_name: '',
     last_name: '',
     document_type: '',
     document_number: '',
     birth_date: '',
     gender: '',
+
+    // Información de contacto
     phone: '',
     phone_emergency: '',
     email: '',
     address: '',
+
+    // Información laboral
     hire_date: '',
-    status: 'active',
+    status: 'activo',
+    shift: 'mañana',
+    salary: '',
+
+    // Licencias y certificaciones
     license_number: '',
     license_type: '',
+    license_expiry: '',
+    has_hazmat_cert: false,
+    hazmat_expiry: '',
+
+    // Información médica
+    medical_exam_date: '',
+    medical_exam_expiry: '',
+    medical_restrictions: '',
+    emergency_contact: '',
+
+    // Auditoría
+    notes: '',
+    is_active: true,
+
+    // Asignación de vehículo
     vehicle_id: ''
 });
 
